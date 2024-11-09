@@ -1,11 +1,10 @@
-import RankingList from "./Component/RankingList";
 
 export default function LeaderboardPage() {
   return (
     <div className="h-full w-full">
       {/* top section for the unlock and side explanation   */}
 
-      <div className="flex w-full h-[45%]  ">
+      <div className="flex w-full h-[45%] ">
         {/* this is the right side  */}
         <div className="w-[58%] flex flex-col items-center h-full ">
           <div className="hover:rotate-[10deg] transition-all duration-500" >
@@ -13,8 +12,8 @@ export default function LeaderboardPage() {
           </div>
 
           <div >
-              <h1 className="text-2xl leading-[3rem] font-bold text-center opacity-80">Unlock leader boards !</h1>
-              <h2 className="text-lg opacity-50 font-semibold text-center">Complete 9 more lessons to start competing</h2>
+              <h1 className="text-3xl leading-[3.5rem] font-bold text-center opacity-80">Unlock leader boards !</h1>
+              <h2 className="text-xl opacity-50 font-semibold text-center">Complete 9 more lessons to start competing</h2>
           </div>
 
           <div className="w-[42%] ] transition-all  h-[15%] flex items-start pt-[1px] justify-center mt-5 bg-[#E5E5E5] rounded-xl">
@@ -36,24 +35,8 @@ export default function LeaderboardPage() {
         </div>
         </div>
       </div>
-{/* this is the bottom part of the leader board  */}
-      <div className="w-[58%] h-[55%] pt-10 flex-nowrap flex flex-col gap-5 overflow-y-auto">
-   <RankingList name={"nikochan"} rank={1} image={"https://picsum.photos/200/300"}/>
-   <RankingList name={"isagi yoichi"} rank={2} image={"https://picsum.photos/200/300?random=1"}/>
-   <RankingList name={"arima kousie"} rank={3} image={"https://picsum.photos/200/300?random=2"}/>
-   <RankingList name={"kuze kun"} rank={4} image={"https://picsum.photos/200/300?random=1"}/>
-   <RankingList name={"maou san"} rank={5} image={"https://picsum.photos/200/300?random=2"}/>
-   <RankingList name={"chitantsu sempai"} rank={6} image={"https://picsum.photos/200/300?random=1"}/>
-   <RankingList name={"hiromiya"} rank={7} image={"https://picsum.photos/200/300"}/>
-   <RankingList name={"nikochan"} rank={1} image={"https://picsum.photos/200/300?random=1"}/>
-   <RankingList name={"nikochan"} rank={1} image={"https://picsum.photos/200/300?random=2"}/>
-   <RankingList name={"nikochan"} rank={1} image={"https://picsum.photos/200/300?random=1"} />
-   <RankingList name={"nikochan"} rank={1} image={"https://picsum.photos/200/300"}/>
-   <RankingList name={"nikochan"} rank={1} image={"https://picsum.photos/200/300"}/>
-   <RankingList name={"nikochan"} rank={1} image={"https://picsum.photos/200/300"}/>
-   <RankingList name={"nikochan"} rank={1} image={"https://picsum.photos/200/300"}/>
-   <RankingList name={"nikochan"} rank={1} image={"https://picsum.photos/200/300"}/>
-      </div>
+
+      <div className="w-full h-[55%] bg-black"></div>
 
 
     </div>
