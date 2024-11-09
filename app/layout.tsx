@@ -7,7 +7,7 @@ import "@radix-ui/themes/styles.css";
 
 import { Nunito } from "next/font/google";
 import { Toaster } from 'sonner'
-
+import MetaMaskProviderWrapper from '@/providers/metamask-provider'
 import { ExitModal } from "@/components/modals/exit-modal";
 import { HeartsModal } from "@/components/modals/hearts-modal";
 import { PracticeModal } from "@/components/modals/practice-modal";
@@ -35,7 +35,9 @@ export default function RootLayout({
         <ExitModal />
         <HeartsModal />
         <PracticeModal />
-        {children}
+        <MetaMaskProviderWrapper>
+          {children}
+        </MetaMaskProviderWrapper>
       </body>
     </html>
   );

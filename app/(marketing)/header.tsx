@@ -5,6 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Wallet, BookOpen, Menu, X, Zap, Users, Lightbulb } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useSDK } from '@metamask/sdk-react';
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@radix-ui/react-popover";
 
 import { Button } from '@/components/ui/button'
 import {
@@ -16,6 +22,26 @@ import {
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { sdk, connected, connecting, account } = useSDK();
+
+  const connect = async () => {
+    try {
+      await sdk?.connect();
+    } catch (err) {
+      console.warn(`No accounts found`, err);
+    }
+  };
+
+  const disconnect = () => {
+    if (sdk) {
+      sdk.terminate();
+    }
+  };
+
+  const formatAddress = (address: string | undefined) => {
+    if (!address) return 'No Address';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
 
   return (
     <motion.header 
@@ -72,10 +98,32 @@ const Header = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Button className="hidden md:flex items-center gap-x-2  border-blue-400 hover:bg-blue-700 hover:text-white transition-colors duration-300">
-              <Wallet className="h-4 w-4" />
-              Connect Wallet
-            </Button>
+            {connected && account ? (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button className="hidden md:flex items-center gap-x-2 border-blue-400 hover:bg-blue-700 hover:text-white transition-colors duration-300">
+                    {formatAddress(account)}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="mt-2 w-44 bg-gray-100 border rounded-md shadow-lg right-0 z-10">
+                  <button
+                    onClick={disconnect}
+                    className="block w-full pl-2 pr-4 py-2 text-left text-[#F05252] hover:bg-gray-200"
+                  >
+                    Disconnect
+                  </button>
+                </PopoverContent>
+              </Popover>
+            ) : (
+              <Button 
+                className="hidden md:flex items-center gap-x-2 border-blue-400 hover:bg-blue-700 hover:text-white transition-colors duration-300"
+                onClick={connect}
+                disabled={connecting}
+              >
+                <Wallet className="h-4 w-4" />
+                {connecting ? 'Connecting...' : 'Connect Wallet'}
+              </Button>
+            )}
           </motion.div>
           
           <motion.div
@@ -134,9 +182,13 @@ const Header = () => {
                 </DropdownMenuItem>
               ))}
               <DropdownMenuItem className="hover:bg-blue-700 focus:bg-blue-700">
-                <button className="flex w-full items-center gap-x-2">
+                <button 
+                  className="flex w-full items-center gap-x-2"
+                  onClick={connect}
+                  disabled={connecting}
+                >
                   <Wallet className="h-4 w-4" />
-                  Connect Wallet
+                  {connecting ? 'Connecting...' : 'Connect Wallet'}
                 </button>
               </DropdownMenuItem>
             </DropdownMenuContent>

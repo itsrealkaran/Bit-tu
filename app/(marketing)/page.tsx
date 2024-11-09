@@ -1,8 +1,5 @@
 import { Coins, Trophy, Rocket, Users } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
-
-import { Button } from "@/components/ui/button"
 
 export default function MarketingPage() {
   return (
@@ -33,16 +30,6 @@ export default function MarketingPage() {
             <Rocket className="h-6 w-6 text-blue-500" />
             <span className="text-sm">Milestone-Based Progress</span>
           </div>
-        </div>
-
-        <div className="flex w-full max-w-[330px] flex-col items-center gap-y-3 lg:items-start">
-          <Button size="lg" variant="default" className="w-full border-blue-600 text-blue-600 hover:bg-blue-50" asChild>
-            <Link href="/signup">Get Started</Link>
-          </Button>
-
-          <Button size="lg"  className="w-full border-blue-600 text-blue-600 hover:bg-blue-50" asChild>
-            <Link href="/signin">I already have an account</Link>
-          </Button>
         </div>
 
         <div className="flex items-center gap-2 text-sm text-neutral-500">
