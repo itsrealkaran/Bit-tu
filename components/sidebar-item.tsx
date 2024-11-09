@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
 
 type SidebarItemProps = {
@@ -18,8 +17,11 @@ export const SidebarItem = ({ label, iconSrc, href }: SidebarItemProps) => {
 
   return (
     <Button
-      variant={isActive ? "sidebarOutline" : "sidebar"}
-      className="h-[52px] justify-start"
+      className={`h-[52px] justify-start w-full font-bold transition-colors
+        ${isActive 
+          ? "bg-blue-100 text-blue-600 hover:bg-blue-200" 
+          : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-600"
+        }`}
       asChild
     >
       <Link href={href}>

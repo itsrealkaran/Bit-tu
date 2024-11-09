@@ -1,11 +1,10 @@
-import { ClerkLoading, ClerkLoaded, UserButton } from "@clerk/nextjs";
-import { Loader } from "lucide-react";
+
+import { UserCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
 import { cn } from "@/lib/utils";
-
-import { SidebarItem } from "./sidebar-item.tsx";
+import { SidebarItem } from "./sidebar-item";
+import { Button } from "@/components/ui/button";
 
 type SidebarProps = {
   className?: string;
@@ -20,15 +19,14 @@ export const Sidebar = ({ className }: SidebarProps) => {
       )}
     >
       <Link href="/learn">
+      
         <div className="flex items-center gap-x-3 pb-7 pl-4 pt-8">
-          <Image src="/mascot.svg" alt="Mascot" height={40} width={40} />
-
-          <h1 className="text-2xl font-extrabold tracking-wide text-green-600">
-            Lingo
+          <Image src="/logo.png" alt="Mascot" height={40} width={40} />
+          <h1 className="text-2xl font-extrabold tracking-wide text-blue-600">
+            Edulingo
           </h1>
         </div>
       </Link>
-
       <div className="flex flex-1 flex-col gap-y-2">
         <SidebarItem label="Learn" href="/learn" iconSrc="/learn.svg" />
         <SidebarItem
@@ -36,23 +34,18 @@ export const Sidebar = ({ className }: SidebarProps) => {
           href="/leaderboard"
           iconSrc="/leaderboard.svg"
         />
-        <SidebarItem label="Quests" href="/quests" iconSrc="/quests.svg" />
-        <SidebarItem label="Shop" href="/shop" iconSrc="/shop.svg" />
+        <SidebarItem label="Tournament" href="/tournament" iconSrc="/quests.svg" />
+        <SidebarItem label="Referal" href="/referal" iconSrc="/shop.svg" />
       </div>
-
       <div className="p-4">
-        <ClerkLoading>
-          <Loader className="h-5 w-5 animate-spin text-muted-foreground" />
-        </ClerkLoading>
+        <Button 
+          className="w-full flex items-center gap-x-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-600"
+          size="sm"
 
-        <ClerkLoaded>
-          <UserButton
-            afterSignOutUrl="/"
-            appearance={{
-              elements: { userButtonPopoverCard: { pointerEvents: "initial" } },
-            }}
-          />
-        </ClerkLoaded>
+        >
+          <UserCircle className="h-5 w-5" />
+          <span>Profile</span>
+        </Button>
       </div>
     </div>
   );
