@@ -1,17 +1,20 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+const font = Nunito({ subsets: ["latin"] });
+import "./globals.css";
+import "@radix-ui/themes/styles.css";
+
+import { Nunito } from "next/font/google";
+import { Toaster } from 'sonner'
+
+import { ExitModal } from "@/components/modals/exit-modal";
+import { HeartsModal } from "@/components/modals/hearts-modal";
+import { PracticeModal } from "@/components/modals/practice-modal";
+
+export const viewport: Viewport = {
+  themeColor: "#22C55E",
+};
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,8 +29,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={font.className}
       >
+        <Toaster theme="light" richColors closeButton />
+        <ExitModal />
+          <HeartsModal />
+          <PracticeModal />
         {children}
       </body>
     </html>
