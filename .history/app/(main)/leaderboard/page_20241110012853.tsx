@@ -13,8 +13,8 @@ export default function LeaderboardPage() {
           </div>
 
           <div >
-              <h1 className="text-2xl leading-[3rem] font-bold text-center opacity-80">Unlock leader boards !</h1>
-              <h2 className="text-lg opacity-50 font-semibold text-center">Complete 9 more lessons to start competing</h2>
+              <h1 className="text-2xl leading-[3.5rem] font-bold text-center opacity-80">Unlock leader boards !</h1>
+              <h2 className="text-xl opacity-50 font-semibold text-center">Complete 9 more lessons to start competing</h2>
           </div>
 
           <div className="w-[42%] ] transition-all  h-[15%] flex items-start pt-[1px] justify-center mt-5 bg-[#E5E5E5] rounded-xl">
