@@ -82,7 +82,7 @@ const Header = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Link href="/learn">
+            <Link href="/lang-selection">
               <Button className="hidden md:flex items-center gap-x-2 bg-blue-100 text-blue-900 hover:bg-white hover:text-blue-700 transition-colors duration-300">
                 <Zap className="h-4 w-4" />
                 Start Learning
@@ -124,7 +124,7 @@ const Header = () => {
                 { href: '/courses', label: 'Courses', icon: BookOpen },
                 { href: '/community', label: 'Community', icon: Users },
                 { href: '/resources', label: 'Resources', icon: Lightbulb },
-                { href: '/learn', label: 'Start Learning', icon: Zap },
+                { href: '/lang-selection', label: 'Start Learning', icon: Zap },
               ].map(({ href, label, icon: Icon }) => (
                 <DropdownMenuItem key={href} className="hover:bg-blue-700 focus:bg-blue-700">
                   <Link href={href} className="flex w-full items-center gap-x-2">
