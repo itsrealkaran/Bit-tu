@@ -8,13 +8,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-// This would typically come from an API or database
 const tournaments = [
-  { id: 1, name: "Beginner's Bash", startDate: "2023-06-01", status: "ongoing" },
-  { id: 2, name: "Intermediate Challenge", startDate: "2023-06-15", status: "ongoing" },
-  { id: 3, name: "Advanced Arena", startDate: "2023-07-01", status: "upcoming" },
-  { id: 4, name: "Language Masters", startDate: "2023-07-15", status: "upcoming" },
-  { id: 5, name: "Quiz Champions", startDate: "2023-06-20", status: "ongoing" },
+  { id: 1, name: "Beginner's Bash", startDate: "2023-06-01", status: "ongoing", price:"20 Aura" },
+  { id: 2, name: "Intermediate Challenge", startDate: "2023-06-15", status: "ongoing", price:"30 Aura" },
+  { id: 3, name: "Advanced Arena", startDate: "2023-07-01", status: "upcoming", price:"50 Aura" },
+  { id: 4, name: "Language Masters", startDate: "2023-07-15", status: "upcoming", price:"50 Aura" },
+  { id: 5, name: "Quiz Champions", startDate: "2023-06-20", status: "ongoing", price:"50 Aura" },
 ]
 
 export default function TournamentsPage() {
@@ -51,6 +50,7 @@ interface Tournament {
   name: string;
   startDate: string;
   status: string;
+  price: string;
 }
 
 function TournamentCard({ tournament }: { tournament: Tournament }) {
@@ -62,7 +62,6 @@ function TournamentCard({ tournament }: { tournament: Tournament }) {
     if (tournament.status === "ongoing") {
       setIsModalOpen(true)
     } else {
-      // For upcoming tournaments, we'll just show an alert
       alert(`You've registered for ${tournament.name}. We'll notify you when it starts!`)
     }
   }
@@ -72,7 +71,6 @@ function TournamentCard({ tournament }: { tournament: Tournament }) {
       alert("Please enter your name")
       return
     }
-    // Navigate to the quiz page with the tournament ID and player name
     router.push(`/quiz/${tournament.id}?name=${encodeURIComponent(playerName)}`)
   }
 
@@ -84,6 +82,7 @@ function TournamentCard({ tournament }: { tournament: Tournament }) {
       <CardContent className="pt-6">
         <p className="text-blue-700">Starts: {tournament.startDate}</p>
         <p className="text-blue-700 capitalize">Status: <span className="font-semibold">{tournament.status}</span></p>
+        <p className="text-blue-700">Starts: {tournament.price}</p>
       </CardContent>
       <CardFooter>
         <Button 

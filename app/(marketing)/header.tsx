@@ -28,7 +28,6 @@ const Header = () => {
   const [registrationError, setRegistrationError] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Effect to handle wallet connection status changes
   useEffect(() => {
     const checkUserStatus = async () => {
       if (connected && account) {
@@ -74,18 +73,15 @@ const Header = () => {
         referralId: referralId || ''
       });
 
-      // Get current gas price
       const provider = userAuthContract.provider;
       const gasPrice = await provider.getGasPrice();
       
-      // Estimate gas for the transaction
       const estimatedGas = await userAuthContract.estimateGas.createUser(
         account,
         name,
         referralId || ''
       );
 
-      // Add 20% buffer to estimated gas
       const gasLimit = estimatedGas.mul(120).div(100);
 
       const tx = await userAuthContract.createUser(
@@ -124,7 +120,6 @@ const Header = () => {
     try {
       console.log('Initiating wallet connection...');
       await sdk?.connect();
-      // User status will be checked by the useEffect hook
     } catch (err) {
       console.warn('Connection failed:', err);
     }
@@ -169,11 +164,11 @@ const Header = () => {
               <h2 className="text-2xl font-bold text-white mb-4">Complete Your Profile</h2>
               <p className="text-blue-200 mb-6">Please provide your details to complete registration</p>
               
-              {registrationError && (
+              {/* {registrationError && (
                 <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm">
                   {registrationError}
                 </div>
-              )}
+              )} */}
               
               <div className="space-y-6">
                 <div>
@@ -191,6 +186,7 @@ const Header = () => {
                   />
                 </div>
                 <div>
+
                   <label htmlFor="referral" className="block text-sm font-medium text-blue-200 mb-2">
                     Referral Code
                   </label>
