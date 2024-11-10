@@ -115,6 +115,9 @@ const Header = () => {
           ? 'This wallet is already registered. Please try logging in instead.'
           : 'Registration failed. Please check your referral code or try again later.'
       );
+      // Close modal and trigger wallet connect on error
+      setIsModalOpen(false);
+      handleConnect();
     } finally {
       setIsProcessing(false);
     }
@@ -155,7 +158,6 @@ const Header = () => {
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setIsModalOpen(false);
-                setRegistrationError('');
               }
             }}
           >
@@ -209,7 +211,6 @@ const Header = () => {
                 <Button
                   onClick={() => {
                     setIsModalOpen(false);
-                    setRegistrationError('');
                   }}
                   className="px-6 py-2 bg-blue-950/80 text-blue-200 hover:bg-blue-950 transition-colors duration-200"
                   disabled={isProcessing}
