@@ -7,6 +7,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useSDK } from '@metamask/sdk-react';
 import * as Popover from "@radix-ui/react-popover";
+import { ethers } from 'ethers';
 
 import { Button } from '@/components/ui/button'
 import {
@@ -28,18 +29,33 @@ const Header = () => {
   const [registrationError, setRegistrationError] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Add new state for user data
+  const [userData, setUserData] = useState<{
+    name: string;
+    referralId: string;
+    score: string;
+  } | null>(null);
+
+  // Effect to handle wallet connection status changes
   useEffect(() => {
     const checkUserStatus = async () => {
       if (connected && account) {
-        console.log('Wallet connected, checking user status for account:', account);
+        console.log('Checking user status for account:', account);
         try {
           const exists = await checkUserExists();
           console.log('User exists check result:', exists);
           
           if (exists) {
-            console.log('Existing user found, proceeding with login...');
-            const userData = await loginUser();
-            console.log('Login successful:', userData);
+            console.log('Attempting to login existing user...');
+            const userInfo = await loginUser();
+            if (userInfo) {
+              console.log('Login successful:', userInfo);
+              setUserData(userInfo);
+              setIsModalOpen(false);
+            } else {
+              console.log('Login failed for existing user');
+              setIsModalOpen(true);
+            }
           } else {
             console.log('New user detected, showing registration modal');
             setIsModalOpen(true);
@@ -48,6 +64,8 @@ const Header = () => {
           console.error('Error in checkUserStatus:', err);
           setRegistrationError('Failed to check user status. Please try again.');
         }
+      } else {
+        setUserData(null);
       }
     };
 
@@ -67,53 +85,60 @@ const Header = () => {
     }
     
     try {
-      console.log('Attempting to create user with params:', {
-        account,
-        name,
-        referralId: referralId || ''
-      });
-
-      const provider = userAuthContract.provider;
-      const gasPrice = await provider.getGasPrice();
+      console.log('Creating user with name:', name, 'and referralId:', referralId);
       
-      const estimatedGas = await userAuthContract.estimateGas.createUser(
-        account,
-        name,
-        referralId || ''
-      );
-
-      const gasLimit = estimatedGas.mul(120).div(100);
-
+      // Wait for the transaction to be mined
       const tx = await userAuthContract.createUser(
-        account,
         name,
         referralId || '',
         {
-          gasLimit,
-          gasPrice
+          gasLimit: ethers.BigNumber.from(200000)
         }
       );
+      
+      console.log('Transaction sent, waiting for confirmation:', tx.hash);
+      const receipt = await tx.wait();
+      console.log('Transaction confirmed:', receipt);
 
-      console.log('Transaction sent:', tx.hash);
-      await tx.wait();
-      console.log('Transaction confirmed');
-      
-      setIsModalOpen(false);
-      console.log('Modal closed');
-      
-      console.log('Attempting to login user...');
-      const userData = await loginUser();
-      console.log('Login successful, user data:', userData);
+      if (receipt.status === 1) {
+        console.log('User created successfully, waiting before login attempt...');
+        
+        // Add a small delay to ensure blockchain state is updated
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Verify user exists before attempting login
+        const exists = await checkUserExists();
+        if (!exists) {
+          throw new Error('User creation verification failed');
+        }
+
+        // Now try to login
+        const userInfo = await loginUser();
+        if (userInfo) {
+          console.log('Login successful after registration:', userInfo);
+          setUserData(userInfo);
+          setIsModalOpen(false);
+        } else {
+          throw new Error('Login failed after successful registration');
+        }
+      } else {
+        throw new Error('Transaction failed');
+      }
     } catch (error: any) {
       console.error('Registration failed with detailed error:', error);
-      setRegistrationError(
-        error.message.includes('user already exists') 
-          ? 'This wallet is already registered. Please try logging in instead.'
-          : 'Registration failed. Please check your referral code or try again later.'
-      );
-      // Close modal and trigger wallet connect on error
-      setIsModalOpen(false);
-      handleConnect();
+      let errorMessage = 'Registration failed. Please try again later.';
+      
+      if (error.message.includes('user already exists')) {
+        errorMessage = 'This wallet is already registered. Please try logging in instead.';
+      } else if (error.message.includes('invalid referral')) {
+        errorMessage = 'Invalid referral code. Please check and try again.';
+      } else if (error.message.includes('insufficient funds')) {
+        errorMessage = 'Insufficient funds to complete the transaction. Please check your wallet balance.';
+      } else if (error.message.includes('User does not exist')) {
+        errorMessage = 'Registration appeared successful but verification failed. Please try logging in or registering again.';
+      }
+      
+      setRegistrationError(errorMessage);
     } finally {
       setIsProcessing(false);
     }
@@ -123,6 +148,7 @@ const Header = () => {
     try {
       console.log('Initiating wallet connection...');
       await sdk?.connect();
+      // User status will be checked by the useEffect hook
     } catch (err) {
       console.warn('Connection failed:', err);
     }
@@ -132,6 +158,7 @@ const Header = () => {
     console.log('Disconnecting wallet...');
     if (sdk) {
       sdk.terminate();
+      setUserData(null); // Clear user data on disconnect
       console.log('Wallet disconnected');
     }
   };
@@ -140,6 +167,31 @@ const Header = () => {
     if (!address) return 'No Address';
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
+
+  // Update the Popover content to show user info
+  const renderWalletContent = () => (
+    <Popover.Content className="mt-2 p-2 w-56 bg-white border border-blue-100 rounded-lg shadow-lg animate-in fade-in-50 zoom-in-95">
+      <div className="space-y-2">
+        <div className="px-2 py-1">
+          <div className="text-sm font-medium text-gray-900">{userData?.name}</div>
+          <div className="text-xs text-gray-500">{formatAddress(account)}</div>
+          {userData?.score && (
+            <div className="text-xs text-blue-600 mt-1">
+              Score: {userData.score}
+            </div>
+          )}
+        </div>
+        <div className="h-px bg-gradient-to-r from-blue-100 to-transparent" />
+        <button
+          onClick={disconnect}
+          className="w-full flex items-center gap-x-2 px-2 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
+        >
+          <X className="h-4 w-4" />
+          Disconnect
+        </button>
+      </div>
+    </Popover.Content>
+  );
 
   return (
     <>
@@ -153,6 +205,7 @@ const Header = () => {
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setIsModalOpen(false);
+                handleConnect(); // Call wallet connect when modal is closed
               }
             }}
           >
@@ -166,11 +219,11 @@ const Header = () => {
               <h2 className="text-2xl font-bold text-white mb-4">Complete Your Profile</h2>
               <p className="text-blue-200 mb-6">Please provide your details to complete registration</p>
               
-              {/* {registrationError && (
+              {registrationError && (
                 <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm">
                   {registrationError}
                 </div>
-              )} */}
+              )}
               
               <div className="space-y-6">
                 <div>
@@ -188,7 +241,6 @@ const Header = () => {
                   />
                 </div>
                 <div>
-
                   <label htmlFor="referral" className="block text-sm font-medium text-blue-200 mb-2">
                     Referral Code
                   </label>
@@ -207,6 +259,7 @@ const Header = () => {
                 <Button
                   onClick={() => {
                     setIsModalOpen(false);
+                    handleConnect(); // Call wallet connect when modal is closed
                   }}
                   className="px-6 py-2 bg-blue-950/80 text-blue-200 hover:bg-blue-950 transition-colors duration-200"
                   disabled={isProcessing}
@@ -285,28 +338,12 @@ const Header = () => {
               {connected && account ? (
                 <Popover.Root>
                   <Popover.Trigger asChild>
-                    <Button 
-                      className="hidden md:flex items-center gap-x-2 bg-gradient-to-r from-blue-900 to-blue-700 text-white hover:from-blue-800 hover:to-blue-600 transition-all duration-300"
-                    >
+                    <Button className="hidden md:flex items-center gap-x-2 bg-gradient-to-r from-blue-900 to-blue-700 text-white hover:from-blue-800 hover:to-blue-600 transition-all duration-300">
                       <Wallet className="h-4 w-4" />
-                      {formatAddress(account)}
+                      {userData?.name || formatAddress(account)}
                     </Button>
                   </Popover.Trigger>
-                  <Popover.Content className="mt-2 p-2 w-48 bg-white border border-blue-100 rounded-lg shadow-lg animate-in fade-in-50 zoom-in-95">
-                    <div className="space-y-2">
-                      <div className="px-2 py-1 text-sm text-gray-500">
-                        Connected Wallet
-                      </div>
-                      <div className="h-px bg-gradient-to-r from-blue-100 to-transparent" />
-                      <button
-                        onClick={disconnect}
-                        className="w-full flex items-center gap-x-2 px-2 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
-                      >
-                        <X className="h-4 w-4" />
-                        Disconnect
-                      </button>
-                    </div>
-                  </Popover.Content>
+                  {renderWalletContent()}
                 </Popover.Root>
               ) : (
                 <Button 

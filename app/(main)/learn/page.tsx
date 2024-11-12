@@ -129,7 +129,7 @@ export default function LanguageLearningPage() {
               <div className="flex items-center justify-between">
                 <span className="flex items-center text-blue-700">
                   <Trophy className="mr-2 text-yellow-500" />
-                  XP
+                  Aura
                 </span>
                 <Badge variant="secondary" className="font-bold">50</Badge>
               </div>

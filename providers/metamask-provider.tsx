@@ -8,7 +8,7 @@ const MetaMaskProviderWrapper = ({ children }: { children: React.ReactNode }) =>
       debug={false}
       sdkOptions={{
         dappMetadata: {
-          name: "Edu Lingo",
+          name: "Bit-tu",
           url: window.location.href,
         }
       }}
