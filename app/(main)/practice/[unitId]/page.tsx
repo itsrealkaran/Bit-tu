@@ -91,7 +91,7 @@ export default function Component() {
         return (
           <RadioGroup onValueChange={setUserAnswer} value={userAnswer} className="space-y-2">
             {currentQuestionData.options && currentQuestionData.options.map((option, index) => (
-              <div key={index} className="flex items-center space-x-2 bg-white p-3 rounded-lg shadow-sm hover:bg-blue-50 transition-colors">
+              <div key={index} className="flex items-center space-x-2 bg-white p-3 rounded-lg shadow-sm hover:bg-orange-50 transition-colors">
                 <RadioGroupItem value={option} id={`option-${index}`} />
                 <Label htmlFor={`option-${index}`} className="flex-grow cursor-pointer">{option}</Label>
               </div>
@@ -113,7 +113,7 @@ export default function Component() {
           <div className="space-y-4">
             <Button
               size="lg"
-              className="w-full flex items-center justify-center bg-blue-100 hover:bg-blue-200 transition-colors"
+              className="w-full flex items-center justify-center bg-orange-100 hover:bg-orange-200 transition-colors"
               onClick={() => {
                 console.log('Playing audio:', currentQuestionData.audioUrl)
               }}
@@ -123,7 +123,7 @@ export default function Component() {
             </Button>
             <RadioGroup onValueChange={setUserAnswer} value={userAnswer} className="space-y-2">
               {currentQuestionData.options && currentQuestionData.options.map((option, index) => (
-                <div key={index} className="flex items-center space-x-2 bg-white p-3 rounded-lg shadow-sm hover:bg-blue-50 transition-colors">
+                <div key={index} className="flex items-center space-x-2 bg-white p-3 rounded-lg shadow-sm hover:bg-orange-50 transition-colors">
                   <RadioGroupItem value={option} id={`option-${index}`} />
                   <Label htmlFor={`option-${index}`} className="flex-grow cursor-pointer">{option}</Label>
                 </div>
@@ -135,10 +135,10 @@ export default function Component() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100">
+    <div className="min-h-screen bg-gradient-to-br from-orange-100 via-white to-purple-100">
       <div className="max-w-4xl mx-auto p-6">
         <header className="flex justify-between items-center mb-6">
-          <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+          <Link href="/" className="inline-flex items-center text-orange-600 hover:text-orange-800 transition-colors">
             <ArrowLeft className="mr-2" />
             <span className="text-lg font-semibold">Back to Lessons</span>
           </Link>
@@ -154,8 +154,8 @@ export default function Component() {
           </div>
         </header>
 
-        <Card className="mb-6 border-2 border-blue-200 shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-t-lg">
+        <Card className="mb-6 border-2 border-orange-200 shadow-lg">
+          <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-orange-500 to-purple-500 text-white rounded-t-lg">
             <CardTitle className="text-2xl font-bold">{lessonContent.title}</CardTitle>
             <Avatar>
               <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
@@ -174,7 +174,7 @@ export default function Component() {
                 />
               </div>
             )} */}
-            <h2 className="text-xl font-semibold text-blue-800 mt-4">{currentQuestionData.question}</h2>
+            <h2 className="text-xl font-semibold text-orange-800 mt-4">{currentQuestionData.question}</h2>
             {renderQuestion()}
             {showFeedback && (
               <Alert variant={isCorrect ? "default" : "destructive"} className="mt-4">
@@ -189,7 +189,7 @@ export default function Component() {
             )}
           </CardContent>
           <CardFooter className="flex justify-between items-center bg-gray-50 rounded-b-lg">
-            <p className="text-blue-600">Question {currentQuestion + 1} of {lessonContent.questions.length}</p>
+            <p className="text-orange-600">Question {currentQuestion + 1} of {lessonContent.questions.length}</p>
             <Button 
               onClick={handleAnswer} 
               disabled={!userAnswer || showFeedback} 

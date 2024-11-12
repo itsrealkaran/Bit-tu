@@ -10,7 +10,7 @@ export default function MarketingPage() {
 
       <div className="flex flex-col items-center gap-y-8 lg:items-start">
         <h1 className="max-w-[600px] text-center text-3xl font-bold text-orange-600 lg:text-left lg:text-5xl">
-          Revolutionize Your Language Learning with EduLingo
+          Revolutionize Your Language Learning with Bit-tu
         </h1>
 
         <p className="max-w-[600px] text-center text-lg text-neutral-600 lg:text-left">

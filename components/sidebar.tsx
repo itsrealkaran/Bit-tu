@@ -1,3 +1,4 @@
+
 import { UserCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,10 +19,11 @@ export const Sidebar = ({ className }: SidebarProps) => {
       )}
     >
       <Link href="/learn">
+      
         <div className="flex items-center gap-x-3 pb-7 pl-4 pt-8">
           <Image src="/logo.png" alt="Mascot" height={40} width={40} />
           <h1 className="text-2xl font-extrabold tracking-wide text-orange-600">
-            Bit tu
+            Bit-tu
           </h1>
         </div>
       </Link>
@@ -37,8 +39,9 @@ export const Sidebar = ({ className }: SidebarProps) => {
       </div>
       <div className="p-4">
         <Button 
-          className="w-full flex items-center gap-x-2 text-neutral-500 hover:bg-orange-100 hover:text-orange-600"
+          className="w-full flex items-center gap-x-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-600"
           size="sm"
+
         >
           <UserCircle className="h-5 w-5" />
           <span>Profile</span>

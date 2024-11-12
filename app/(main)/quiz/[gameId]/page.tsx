@@ -65,7 +65,7 @@ export default function QuizPage() {
       <div className="container mx-auto px-4 py-8">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-blue-600">Quiz Completed</CardTitle>
+            <CardTitle className="text-2xl font-bold text-orange-600">Quiz Completed</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xl mb-4">Congratulations, {playerName}!</p>
@@ -82,7 +82,7 @@ export default function QuizPage() {
     <div className="container mx-auto px-4 py-8">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-blue-600">
+          <CardTitle className="text-2xl font-bold text-orange-600">
             Question {currentQuestion + 1} of {totalQuestions}
           </CardTitle>
         </CardHeader>
@@ -102,7 +102,7 @@ export default function QuizPage() {
                     ? option === questions[currentQuestion].correctAnswer
                       ? "bg-green-500"
                       : "bg-red-500"
-                    : "bg-blue-500"
+                    : "bg-orange-500"
                 } hover:opacity-80 text-white`}
                 disabled={selectedAnswer !== ""}
               >

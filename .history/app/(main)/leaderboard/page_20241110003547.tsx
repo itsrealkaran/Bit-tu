@@ -17,7 +17,7 @@ export default function LeaderboardPage() {
 
           <div className="w-[42%] h-[15%] flex items-start pt-[1px] justify-center bg-[#E5E5E5] rounded-xl">
             <div className="w-[98%] h-[92%] bg-white rounded-xl flex items-center justify-center">
-              <h1 className="text-blue">Start a lesson</h1>
+              <h1 className="text-orange">Start a lesson</h1>
             </div>
           </div>
         </div>

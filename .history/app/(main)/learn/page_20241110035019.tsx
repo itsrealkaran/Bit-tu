@@ -48,7 +48,7 @@ import { ArrowLeft, Book, Lock, Star, Trophy } from "lucide-react"
 
 //     return (
 //       <div className="min-h-screen bg-slate-900 text-white">
-//         <div className="bg-blue-500 p-4 flex items-center justify-between">
+//         <div className="bg-orange-500 p-4 flex items-center justify-between">
 //           <Button 
 //             variant="ghost" 
 //             className="text-white hover:text-white/80"
@@ -57,7 +57,7 @@ import { ArrowLeft, Book, Lock, Star, Trophy } from "lucide-react"
 //             <ArrowLeft className="h-5 w-5 mr-2" />
 //             {section.title}
 //           </Button>
-//           <Button variant="secondary" className="bg-blue-400 hover:bg-blue-300">
+//           <Button variant="secondary" className="bg-orange-400 hover:bg-orange-300">
 //             <Book className="h-5 w-5 mr-2" />
 //             Guidebook
 //           </Button>
@@ -74,7 +74,7 @@ import { ArrowLeft, Book, Lock, Star, Trophy } from "lucide-react"
 //                 <Button
 //                   variant={unit.locked ? "secondary" : "default"}
 //                   className={`h-16 w-16 rounded-full ${
-//                     unit.locked ? 'bg-slate-700' : 'bg-blue-500 hover:bg-blue-400'
+//                     unit.locked ? 'bg-slate-700' : 'bg-orange-500 hover:bg-orange-400'
 //                   }`}
 //                   disabled={unit.locked}
 //                 >
@@ -118,7 +118,7 @@ import { ArrowLeft, Book, Lock, Star, Trophy } from "lucide-react"
 //           >
 //             <div className="flex items-center justify-between">
 //               <div>
-//                 <div className="text-blue-400 text-sm font-medium">
+//                 <div className="text-orange-400 text-sm font-medium">
 //                   A{section.id} • SEE DETAILS
 //                 </div>
 //                 <h2 className="text-xl font-bold">{section.title}</h2>
@@ -139,7 +139,7 @@ import { ArrowLeft, Book, Lock, Star, Trophy } from "lucide-react"
 //             <div className="text-lg">{section.subtitle}</div>
             
 //             <Button
-//               className="w-full bg-blue-500 hover:bg-blue-400"
+//               className="w-full bg-orange-500 hover:bg-orange-400"
 //               disabled={section.locked}
 //               onClick={() => setActiveSection(section.id)}
 //             >
@@ -227,7 +227,7 @@ const page = () => {
                       </div>
         </div>
       </div>
-      <div className='w-[38%] h-full bg-blue-600'></div>
+      <div className='w-[38%] h-full bg-orange-600'></div>
 
 
 

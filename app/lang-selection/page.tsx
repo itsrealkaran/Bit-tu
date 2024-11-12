@@ -44,6 +44,7 @@ export default function LanguageSelectionPage() {
     setLoading(true)
     // Simulate API call or loading process
     setTimeout(() => {
+      // router.push(`/learn/${lang.name.toLowerCase()}`)
       router.push(`/learn`)
     }, 2000)
   }

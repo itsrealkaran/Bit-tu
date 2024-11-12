@@ -40,19 +40,21 @@ const Header = () => {
   useEffect(() => {
     const checkUserStatus = async () => {
       if (connected && account) {
-        console.log('Wallet connected, checking user status for account:', account);
+        console.log('Checking user status for account:', account);
         try {
           const exists = await checkUserExists();
           console.log('User exists check result:', exists);
           
           if (exists) {
-            console.log('Existing user found, proceeding with login...');
+            console.log('Attempting to login existing user...');
             const userInfo = await loginUser();
             if (userInfo) {
               console.log('Login successful:', userInfo);
               setUserData(userInfo);
-              // Close modal if it's open
               setIsModalOpen(false);
+            } else {
+              console.log('Login failed for existing user');
+              setIsModalOpen(true);
             }
           } else {
             console.log('New user detected, showing registration modal');
@@ -63,7 +65,6 @@ const Header = () => {
           setRegistrationError('Failed to check user status. Please try again.');
         }
       } else {
-        // Reset user data when disconnected
         setUserData(null);
       }
     };
@@ -84,11 +85,9 @@ const Header = () => {
     }
     
     try {
-      await userAuthContract.createUser(
-        name,
-        referralId || ''
-      );
-
+      console.log('Creating user with name:', name, 'and referralId:', referralId);
+      
+      // Wait for the transaction to be mined
       const tx = await userAuthContract.createUser(
         name,
         referralId || '',
@@ -96,18 +95,34 @@ const Header = () => {
           gasLimit: ethers.BigNumber.from(200000)
         }
       );
+      
+      console.log('Transaction sent, waiting for confirmation:', tx.hash);
+      const receipt = await tx.wait();
+      console.log('Transaction confirmed:', receipt);
 
-      console.log('Transaction sent:', tx.hash);
-      await tx.wait();
-      console.log('Transaction confirmed');
-      
-      setIsModalOpen(false);
-      
-      // After successful registration, login the user
-      const userInfo = await loginUser();
-      if (userInfo) {
-        console.log('Login successful after registration:', userInfo);
-        setUserData(userInfo);
+      if (receipt.status === 1) {
+        console.log('User created successfully, waiting before login attempt...');
+        
+        // Add a small delay to ensure blockchain state is updated
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Verify user exists before attempting login
+        const exists = await checkUserExists();
+        if (!exists) {
+          throw new Error('User creation verification failed');
+        }
+
+        // Now try to login
+        const userInfo = await loginUser();
+        if (userInfo) {
+          console.log('Login successful after registration:', userInfo);
+          setUserData(userInfo);
+          setIsModalOpen(false);
+        } else {
+          throw new Error('Login failed after successful registration');
+        }
+      } else {
+        throw new Error('Transaction failed');
       }
     } catch (error: any) {
       console.error('Registration failed with detailed error:', error);
@@ -119,6 +134,8 @@ const Header = () => {
         errorMessage = 'Invalid referral code. Please check and try again.';
       } else if (error.message.includes('insufficient funds')) {
         errorMessage = 'Insufficient funds to complete the transaction. Please check your wallet balance.';
+      } else if (error.message.includes('User does not exist')) {
+        errorMessage = 'Registration appeared successful but verification failed. Please try logging in or registering again.';
       }
       
       setRegistrationError(errorMessage);
@@ -153,18 +170,18 @@ const Header = () => {
 
   // Update the Popover content to show user info
   const renderWalletContent = () => (
-    <Popover.Content className="mt-2 p-2 w-56 bg-white border border-blue-100 rounded-lg shadow-lg animate-in fade-in-50 zoom-in-95">
+    <Popover.Content className="mt-2 p-2 w-56 bg-white border border-orange-100 rounded-lg shadow-lg animate-in fade-in-50 zoom-in-95">
       <div className="space-y-2">
         <div className="px-2 py-1">
           <div className="text-sm font-medium text-gray-900">{userData?.name}</div>
           <div className="text-xs text-gray-500">{formatAddress(account)}</div>
           {userData?.score && (
-            <div className="text-xs text-blue-600 mt-1">
+            <div className="text-xs text-orange-600 mt-1">
               Score: {userData.score}
             </div>
           )}
         </div>
-        <div className="h-px bg-gradient-to-r from-blue-100 to-transparent" />
+        <div className="h-px bg-gradient-to-r from-orange-100 to-transparent" />
         <button
           onClick={disconnect}
           className="w-full flex items-center gap-x-2 px-2 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
@@ -224,7 +241,6 @@ const Header = () => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="referral" className="block text-sm font-medium text-blue-200 mb-2">
                   <label htmlFor="referral" className="block text-sm font-medium text-orange-200 mb-2">
                     Referral Code
                   </label>
@@ -263,12 +279,14 @@ const Header = () => {
         )}
       </AnimatePresence>
 
+      {/* Rest of the header component remains unchanged */}
       <motion.header 
         className="w-full bg-gradient-to-r from-orange-900 via-orange-700 to-orange-500 px-4 py-3"
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        {/* ... rest of the header JSX remains unchanged ... */}
         <div className="mx-auto flex items-center justify-between max-w-7xl">
           <Link href="/" className="flex items-center gap-x-2 group">
             <motion.div 
@@ -281,7 +299,7 @@ const Header = () => {
             </motion.div>
 
             <h1 className="text-2xl font-bold text-white">
-              bit <span className="text-orange-200">tu</span>
+              Bit<span className="text-orange-200">-tu</span>
             </h1>
           </Link>
 
@@ -320,30 +338,12 @@ const Header = () => {
               {connected && account ? (
                 <Popover.Root>
                   <Popover.Trigger asChild>
-                    <Button className="hidden md:flex items-center gap-x-2 bg-gradient-to-r from-blue-900 to-blue-700 text-white hover:from-blue-800 hover:to-blue-600 transition-all duration-300">
-                    <Button 
-                      className="hidden md:flex items-center gap-x-2 bg-gradient-to-r from-orange-900 to-orange-700 text-white hover:from-orange-800 hover:to-orange-600 transition-all duration-300"
-                    >
+                    <Button className="hidden md:flex items-center gap-x-2 bg-gradient-to-r from-orange-900 to-orange-700 text-white hover:from-orange-800 hover:to-orange-600 transition-all duration-300">
                       <Wallet className="h-4 w-4" />
                       {userData?.name || formatAddress(account)}
                     </Button>
                   </Popover.Trigger>
                   {renderWalletContent()}
-                  <Popover.Content className="mt-2 p-2 w-48 bg-white border border-orange-100 rounded-lg shadow-lg animate-in fade-in-50 zoom-in-95">
-                    <div className="space-y-2">
-                      <div className="px-2 py-1 text-sm text-gray-500">
-                        Connected Wallet
-                      </div>
-                      <div className="h-px bg-gradient-to-r from-orange-100 to-transparent" />
-                      <button
-                        onClick={disconnect}
-                        className="w-full flex items-center gap-x-2 px-2 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
-                      >
-                        <X className="h-4 w-4" />
-                        Disconnect
-                      </button>
-                    </div>
-                  </Popover.Content>
                 </Popover.Root>
               ) : (
                 <Button 

@@ -68,7 +68,7 @@ const Page = () => {
         </div>
       ) : (
         <div className="min-h-screen bg-slate-900 w-[62%] text-white">
-          <div className="bg-blue-500 p-4 flex items-center justify-between">
+          <div className="bg-orange-500 p-4 flex items-center justify-between">
             <Button 
               variant="ghost" 
               className="text-white hover:text-white/80"
@@ -77,7 +77,7 @@ const Page = () => {
               <ArrowLeft className="h-5 w-5 mr-2" />
               {section?.title || "Select a Section"}
             </Button>
-            <Button variant="secondary" className="bg-blue-400 hover:bg-blue-300">
+            <Button variant="secondary" className="bg-orange-400 hover:bg-orange-300">
               <Book className="h-5 w-5 mr-2" />
               Guidebook
             </Button>
@@ -93,7 +93,7 @@ const Page = () => {
                   )}
                   <Button
                     variant={unit.locked ? "secondary" : "default"}
-                    className={`h-16 w-16 rounded-full ${unit.locked ? 'bg-slate-700' : 'bg-blue-500 hover:bg-blue-400'}`}
+                    className={`h-16 w-16 rounded-full ${unit.locked ? 'bg-slate-700' : 'bg-orange-500 hover:bg-orange-400'}`}
                     disabled={unit.locked}
                   >
                     {unit.locked ? (

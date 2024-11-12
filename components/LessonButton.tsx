@@ -16,10 +16,10 @@ export const LessonButton = ({ id, status }: LessonButtonProps) => {
       size="lg"
       className={`relative h-[64px] w-[64px] rounded-full border-4 ${
         status === "locked"
-          ? "border-blue-100 bg-blue-50 text-blue-200"
+          ? "border-orange-100 bg-orange-50 text-orange-200"
           : status === "completed"
-          ? "border-blue-500 bg-blue-500 text-white"
-          : "border-blue-500 bg-white text-blue-500"
+          ? "border-orange-500 bg-orange-500 text-white"
+          : "border-orange-500 bg-white text-orange-500"
       }`}
       disabled={status === "locked"}
       onClick={() => setSelectedLesson(id)}
