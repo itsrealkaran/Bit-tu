@@ -89,8 +89,6 @@ const Header = () => {
         referralId || ''
       );
 
-      const gasLimit = estimatedGas.mul(120).div(100);
-
       const tx = await userAuthContract.createUser(
         name,
         referralId || '',
@@ -205,11 +203,9 @@ const Header = () => {
               <p className="text-orange-200 mb-6">Please provide your details to complete registration</p>
               
               {registrationError && (
-              {registrationError && (
                 <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm">
                   {registrationError}
                 </div>
-              )}
               )}
               
               <div className="space-y-6">
