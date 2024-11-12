@@ -44,16 +44,15 @@ export default function LanguageSelectionPage() {
     setLoading(true)
     // Simulate API call or loading process
     setTimeout(() => {
-      // router.push(`/learn/${lang.name.toLowerCase()}`)
       router.push(`/learn`)
     }, 2000)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       <div className="mx-auto max-w-4xl px-4 py-12">
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-3xl font-bold text-blue-600">Choose Your Language</h1>
+          <h1 className="mb-2 text-3xl font-bold text-orange-600">Choose Your Language</h1>
           <p className="text-lg text-gray-600">What language do you want to learn today?</p>
         </div>
 
@@ -80,14 +79,14 @@ export default function LanguageSelectionPage() {
                 <CardContent className="p-0">
                   <button 
                     onClick={() => handleLanguageSelect(lang)} 
-                    className="w-full flex items-center justify-between p-4 hover:bg-blue-50 transition-colors"
+                    className="w-full flex items-center justify-between p-4 hover:bg-orange-50 transition-colors"
                   >
                     <div className="flex items-center space-x-3">
                       <span className="text-2xl">{lang.flag}</span>
                       <span className="font-medium text-gray-700">{lang.name}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="text-sm font-semibold text-blue-600">{lang.price} AURA</span>
+                      <span className="text-sm font-semibold text-orange-600">{lang.price} AURA</span>
                       <ChevronRight className="h-5 w-5 text-gray-400" />
                     </div>
                   </button>
@@ -106,7 +105,7 @@ export default function LanguageSelectionPage() {
 
         <div className="mt-12 text-center">
           <p className="mb-4 text-sm text-gray-500">Don't see your language? We're always adding more!</p>
-          <Button className="text-blue-600 border-blue-300 hover:bg-blue-50">
+          <Button className="text-orange-600 border-orange-300 hover:bg-orange-50">
             Request a Language
           </Button>
         </div>
@@ -121,7 +120,7 @@ export default function LanguageSelectionPage() {
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           >
             <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-              <Loader className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+              <Loader className="h-12 w-12 animate-spin text-orange-600 mx-auto mb-4" />
               <p className="text-lg font-semibold text-gray-700">Loading {selectedLanguage?.name}...</p>
               <p className="text-sm text-gray-500 mt-2">Preparing your learning journey</p>
             </div>

@@ -40,21 +40,19 @@ const Header = () => {
   useEffect(() => {
     const checkUserStatus = async () => {
       if (connected && account) {
-        console.log('Checking user status for account:', account);
+        console.log('Wallet connected, checking user status for account:', account);
         try {
           const exists = await checkUserExists();
           console.log('User exists check result:', exists);
           
           if (exists) {
-            console.log('Attempting to login existing user...');
+            console.log('Existing user found, proceeding with login...');
             const userInfo = await loginUser();
             if (userInfo) {
               console.log('Login successful:', userInfo);
               setUserData(userInfo);
+              // Close modal if it's open
               setIsModalOpen(false);
-            } else {
-              console.log('Login failed for existing user');
-              setIsModalOpen(true);
             }
           } else {
             console.log('New user detected, showing registration modal');
@@ -65,6 +63,7 @@ const Header = () => {
           setRegistrationError('Failed to check user status. Please try again.');
         }
       } else {
+        // Reset user data when disconnected
         setUserData(null);
       }
     };
@@ -85,9 +84,13 @@ const Header = () => {
     }
     
     try {
-      console.log('Creating user with name:', name, 'and referralId:', referralId);
-      
-      // Wait for the transaction to be mined
+      await userAuthContract.createUser(
+        name,
+        referralId || ''
+      );
+
+      const gasLimit = estimatedGas.mul(120).div(100);
+
       const tx = await userAuthContract.createUser(
         name,
         referralId || '',
@@ -95,34 +98,18 @@ const Header = () => {
           gasLimit: ethers.BigNumber.from(200000)
         }
       );
+
+      console.log('Transaction sent:', tx.hash);
+      await tx.wait();
+      console.log('Transaction confirmed');
       
-      console.log('Transaction sent, waiting for confirmation:', tx.hash);
-      const receipt = await tx.wait();
-      console.log('Transaction confirmed:', receipt);
-
-      if (receipt.status === 1) {
-        console.log('User created successfully, waiting before login attempt...');
-        
-        // Add a small delay to ensure blockchain state is updated
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Verify user exists before attempting login
-        const exists = await checkUserExists();
-        if (!exists) {
-          throw new Error('User creation verification failed');
-        }
-
-        // Now try to login
-        const userInfo = await loginUser();
-        if (userInfo) {
-          console.log('Login successful after registration:', userInfo);
-          setUserData(userInfo);
-          setIsModalOpen(false);
-        } else {
-          throw new Error('Login failed after successful registration');
-        }
-      } else {
-        throw new Error('Transaction failed');
+      setIsModalOpen(false);
+      
+      // After successful registration, login the user
+      const userInfo = await loginUser();
+      if (userInfo) {
+        console.log('Login successful after registration:', userInfo);
+        setUserData(userInfo);
       }
     } catch (error: any) {
       console.error('Registration failed with detailed error:', error);
@@ -134,8 +121,6 @@ const Header = () => {
         errorMessage = 'Invalid referral code. Please check and try again.';
       } else if (error.message.includes('insufficient funds')) {
         errorMessage = 'Insufficient funds to complete the transaction. Please check your wallet balance.';
-      } else if (error.message.includes('User does not exist')) {
-        errorMessage = 'Registration appeared successful but verification failed. Please try logging in or registering again.';
       }
       
       setRegistrationError(errorMessage);
@@ -213,21 +198,23 @@ const Header = () => {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-gradient-to-br from-blue-900 to-blue-800 rounded-xl p-8 w-full max-w-md shadow-2xl border border-blue-700/50"
+              className="bg-gradient-to-br from-orange-900 to-orange-800 rounded-xl p-8 w-full max-w-md shadow-2xl border border-orange-700/50"
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-2xl font-bold text-white mb-4">Complete Your Profile</h2>
-              <p className="text-blue-200 mb-6">Please provide your details to complete registration</p>
+              <p className="text-orange-200 mb-6">Please provide your details to complete registration</p>
               
+              {registrationError && (
               {registrationError && (
                 <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm">
                   {registrationError}
                 </div>
               )}
+              )}
               
               <div className="space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-blue-200 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-orange-200 mb-2">
                     Your Name *
                   </label>
                   <input
@@ -235,13 +222,14 @@ const Header = () => {
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-2 bg-blue-950/50 border border-blue-700/50 rounded-lg text-white placeholder-blue-400/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-4 py-2 bg-orange-950/50 border border-orange-700/50 rounded-lg text-white placeholder-orange-400/50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
                     placeholder="Enter your name"
                     disabled={isProcessing}
                   />
                 </div>
                 <div>
                   <label htmlFor="referral" className="block text-sm font-medium text-blue-200 mb-2">
+                  <label htmlFor="referral" className="block text-sm font-medium text-orange-200 mb-2">
                     Referral Code
                   </label>
                   <input
@@ -249,7 +237,7 @@ const Header = () => {
                     id="referral"
                     value={referralId}
                     onChange={(e) => setReferralId(e.target.value)}
-                    className="w-full px-4 py-2 bg-blue-950/50 border border-blue-700/50 rounded-lg text-white placeholder-blue-400/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-4 py-2 bg-orange-950/50 border border-orange-700/50 rounded-lg text-white placeholder-orange-400/50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
                     placeholder="Optional referral code"
                     disabled={isProcessing}
                   />
@@ -261,7 +249,7 @@ const Header = () => {
                     setIsModalOpen(false);
                     handleConnect(); // Call wallet connect when modal is closed
                   }}
-                  className="px-6 py-2 bg-blue-950/80 text-blue-200 hover:bg-blue-950 transition-colors duration-200"
+                  className="px-6 py-2 bg-orange-950/80 text-orange-200 hover:bg-orange-950 transition-colors duration-200"
                   disabled={isProcessing}
                 >
                   Cancel
@@ -269,7 +257,7 @@ const Header = () => {
                 <Button
                   onClick={handleSubmitRegistration}
                   disabled={!name || isProcessing}
-                  className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                  className="px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   {isProcessing ? 'Processing...' : 'Complete Registration'}
                 </Button>
@@ -279,14 +267,12 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      {/* Rest of the header component remains unchanged */}
       <motion.header 
-        className="w-full bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500 px-4 py-3"
+        className="w-full bg-gradient-to-r from-orange-900 via-orange-700 to-orange-500 px-4 py-3"
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* ... rest of the header JSX remains unchanged ... */}
         <div className="mx-auto flex items-center justify-between max-w-7xl">
           <Link href="/" className="flex items-center gap-x-2 group">
             <motion.div 
@@ -294,12 +280,12 @@ const Header = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-300 to-blue-100 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-300 to-orange-100 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
               <Image src="/logo.png?height=40&width=40" alt="Web3 Lingo Logo" height={40} width={40} className="relative rounded-full" />
             </motion.div>
 
             <h1 className="text-2xl font-bold text-white">
-              Edu <span className="text-blue-200">Lingo</span>
+              bit <span className="text-orange-200">tu</span>
             </h1>
           </Link>
 
@@ -314,13 +300,13 @@ const Header = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <Link href={href} className="text-blue-100 hover:text-white transition-colors group">
+                <Link href={href} className="text-orange-100 hover:text-white transition-colors group">
                   <div className="flex items-center gap-x-1">
                     <Icon className="h-4 w-4" />
                     <span>{label}</span>
                   </div>
                   <motion.div 
-                    className="h-0.5 bg-blue-300"
+                    className="h-0.5 bg-orange-300"
                     initial={{ width: 0 }}
                     whileHover={{ width: '100%' }}
                     transition={{ duration: 0.3 }}
@@ -339,15 +325,33 @@ const Header = () => {
                 <Popover.Root>
                   <Popover.Trigger asChild>
                     <Button className="hidden md:flex items-center gap-x-2 bg-gradient-to-r from-blue-900 to-blue-700 text-white hover:from-blue-800 hover:to-blue-600 transition-all duration-300">
+                    <Button 
+                      className="hidden md:flex items-center gap-x-2 bg-gradient-to-r from-orange-900 to-orange-700 text-white hover:from-orange-800 hover:to-orange-600 transition-all duration-300"
+                    >
                       <Wallet className="h-4 w-4" />
                       {userData?.name || formatAddress(account)}
                     </Button>
                   </Popover.Trigger>
                   {renderWalletContent()}
+                  <Popover.Content className="mt-2 p-2 w-48 bg-white border border-orange-100 rounded-lg shadow-lg animate-in fade-in-50 zoom-in-95">
+                    <div className="space-y-2">
+                      <div className="px-2 py-1 text-sm text-gray-500">
+                        Connected Wallet
+                      </div>
+                      <div className="h-px bg-gradient-to-r from-orange-100 to-transparent" />
+                      <button
+                        onClick={disconnect}
+                        className="w-full flex items-center gap-x-2 px-2 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md transition-colors duration-200"
+                      >
+                        <X className="h-4 w-4" />
+                        Disconnect
+                      </button>
+                    </div>
+                  </Popover.Content>
                 </Popover.Root>
               ) : (
                 <Button 
-                  className="hidden md:flex items-center gap-x-2 border-blue-400 hover:bg-blue-700 hover:text-white transition-colors duration-300"
+                  className="hidden md:flex items-center gap-x-2 border-orange-400 hover:bg-orange-700 hover:text-white transition-colors duration-300"
                   onClick={handleConnect}
                   disabled={connecting}
                 >
@@ -362,7 +366,7 @@ const Header = () => {
               whileTap={{ scale: 0.95 }}
             >
               <Link href="/lang-selection">
-                <Button className="hidden md:flex items-center gap-x-2 bg-blue-100 text-blue-900 hover:bg-white hover:text-blue-700 transition-colors duration-300">
+                <Button className="hidden md:flex items-center gap-x-2 bg-orange-100 text-orange-900 hover:bg-white hover:text-orange-700 transition-colors duration-300">
                   <Zap className="h-4 w-4" />
                   Start Learning
                 </Button>
@@ -371,7 +375,7 @@ const Header = () => {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden text-white hover:bg-blue-700/50" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                <Button variant="ghost" size="icon" className="md:hidden text-white hover:bg-orange-700/50" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                   <AnimatePresence mode="wait" initial={false}>
                     {isMenuOpen ? (
                       <motion.div
@@ -398,28 +402,28 @@ const Header = () => {
                   <span className="sr-only">Toggle menu</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-blue-800 text-blue-100 border-blue-700">
+              <DropdownMenuContent align="end" className="w-56 bg-orange-800 text-orange-100 border-orange-700">
                 {[
                   { href: '/courses', label: 'Courses', icon: BookOpen },
                   { href: '/community', label: 'Community', icon: Users },
                   { href: '/resources', label: 'Resources', icon: Lightbulb },
                   { href: '/lang-selection', label: 'Start Learning', icon: Zap },
                 ].map(({ href, label, icon: Icon }) => (
-                  <DropdownMenuItem key={href} className="hover:bg-blue-700 focus:bg-blue-700">
+                  <DropdownMenuItem key={href} className="hover:bg-orange-700 focus:bg-orange-700">
                     <Link href={href} className="flex w-full items-center gap-x-2">
                       <Icon className="h-4 w-4" />
                       {label}
                     </Link>
                   </DropdownMenuItem>
                 ))}
-                <DropdownMenuItem className="hover:bg-blue-700 focus:bg-blue-700">
+                <DropdownMenuItem className="hover:bg-orange-700 focus:bg-orange-700">
                   {connected && account ? (
                     <div className="w-full space-y-2">
                       <div className="flex items-center gap-x-2">
                         <Wallet className="h-4 w-4" />
                         {formatAddress(account)}
                       </div>
-                      <div className="h-px bg-gradient-to-r from-blue-100 to-transparent" />
+                      <div className="h-px bg-gradient-to-r from-orange-100 to-transparent" />
                       <button 
                         onClick={disconnect}
                         className="w-full flex items-center gap-x-2 text-red-500 hover:text-red-600 transition-colors"

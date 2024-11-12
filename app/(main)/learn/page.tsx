@@ -64,16 +64,16 @@ export default function LanguageLearningPage() {
   }
 
   return (
-    <div className="flex h-screen bg-blue-50">
+    <div className="flex h-screen bg-orange-50">
       <main className="flex-1 overflow-y-auto p-6">
         <header className="mb-6">
-          <Link href="/" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+          <Link href="/" className="inline-flex items-center text-orange-600 hover:text-orange-800">
             <ArrowLeft className="mr-2" />
             <span className="text-lg font-semibold">Back to Home</span>
           </Link>
         </header>
 
-        <h1 className="text-3xl font-bold mb-6 text-blue-900">Learn French</h1>
+        <h1 className="text-3xl font-bold mb-6 text-gray-900">Learn French</h1>
 
         {mockSections.map((section) => (
           <Accordion
@@ -83,18 +83,18 @@ export default function LanguageLearningPage() {
             className="mb-6"
           >
             <AccordionItem value={`section-${section.id}`} className="border-none">
-              <AccordionTrigger className="bg-white rounded-t-lg shadow-sm hover:bg-blue-50">
+              <AccordionTrigger className="bg-white rounded-t-lg shadow-sm hover:bg-orange-50">
                 <div className="flex items-center justify-between w-full p-4">
                   <div>
-                    <h2 className="text-xl font-semibold text-blue-900">{section.title}</h2>
-                    <p className="text-sm text-blue-600">{section.subtitle}</p>
+                    <h2 className="text-xl font-semibold text-gray-900">{section.title}</h2>
+                    <p className="text-sm text-orange-600">{section.subtitle}</p>
                   </div>
                   <div className="flex items-center space-x-4">
                     <Progress value={section.progress} className="w-24" />
-                    <span className="text-sm font-medium text-blue-700">
+                    <span className="text-sm font-medium text-gray-700">
                       {section.progress}%
                     </span>
-                    {section.locked && <Lock className="text-blue-300" />}
+                    {section.locked && <Lock className="text-gray-300" />}
                   </div>
                 </div>
               </AccordionTrigger>
@@ -119,33 +119,26 @@ export default function LanguageLearningPage() {
         ))}
       </main>
 
-      <aside className="w-80 bg-white p-6 border-l border-blue-100 overflow-y-auto">
+      <aside className="w-80 bg-white p-6 border-l border-orange-100 overflow-y-auto">
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-blue-900">Your Progress</CardTitle>
+            <CardTitle className="text-lg font-semibold text-gray-900">Your Progress</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="flex items-center text-blue-700">
+                <span className="flex items-center text-gray-700">
                   <Trophy className="mr-2 text-yellow-500" />
                   Aura
                 </span>
                 <Badge variant="secondary" className="font-bold">50</Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="flex items-center text-blue-700">
-                  <Gem className="mr-2 text-blue-500" />
-                  Gems
+                <span className="flex items-center text-gray-700">
+                  <Gem className="mr-2 text-orange-500" />
+                  Aura
                 </span>
                 <Badge variant="secondary" className="font-bold">20</Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="flex items-center text-blue-700">
-                  <Heart className="mr-2 text-red-500" />
-                  Lives
-                </span>
-                <Badge variant="secondary" className="font-bold">4/5</Badge>
               </div>
             </div>
           </CardContent>
@@ -153,17 +146,17 @@ export default function LanguageLearningPage() {
 
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-blue-900">Daily Goal</CardTitle>
+            <CardTitle className="text-lg font-semibold text-gray-900">Daily Goal</CardTitle>
           </CardHeader>
           <CardContent>
             <Progress value={60} className="mb-2" />
-            <p className="text-sm text-blue-600">3/5 lessons completed</p>
+            <p className="text-sm text-orange-600">3/5 lessons completed</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-blue-900">Achievements</CardTitle>
+            <CardTitle className="text-lg font-semibold text-gray-900">Achievements</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-4">
@@ -171,19 +164,19 @@ export default function LanguageLearningPage() {
                 <div className="rounded-full bg-yellow-100 p-3 mb-2">
                   <Star className="text-yellow-500" />
                 </div>
-                <span className="text-xs text-center text-blue-700">10 Day Streak</span>
+                <span className="text-xs text-center text-gray-700">10 Day Streak</span>
               </div>
               <div className="flex flex-col items-center">
                 <div className="rounded-full bg-green-100 p-3 mb-2">
                   <Book className="text-green-500" />
                 </div>
-                <span className="text-xs text-center text-blue-700">100 Lessons</span>
+                <span className="text-xs text-center text-gray-700">100 Lessons</span>
               </div>
               <div className="flex flex-col items-center opacity-50">
                 <div className="rounded-full bg-gray-100 p-3 mb-2">
                   <Trophy className="text-gray-400" />
                 </div>
-                <span className="text-xs text-center text-blue-700">Locked</span>
+                <span className="text-xs text-center text-gray-700">Locked</span>
               </div>
             </div>
           </CardContent>

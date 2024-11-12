@@ -9,7 +9,7 @@ export default function MarketingPage() {
       </div>
 
       <div className="flex flex-col items-center gap-y-8 lg:items-start">
-        <h1 className="max-w-[600px] text-center text-3xl font-bold text-blue-600 lg:text-left lg:text-5xl">
+        <h1 className="max-w-[600px] text-center text-3xl font-bold text-orange-600 lg:text-left lg:text-5xl">
           Revolutionize Your Language Learning with EduLingo
         </h1>
 
@@ -19,15 +19,15 @@ export default function MarketingPage() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="flex items-center gap-2">
-            <Coins className="h-6 w-6 text-blue-500" />
+            <Coins className="h-6 w-6 text-orange-500" />
             <span className="text-sm">Stake & Earn Rewards</span>
           </div>
           <div className="flex items-center gap-2">
-            <Trophy className="h-6 w-6 text-blue-500" />
+            <Trophy className="h-6 w-6 text-orange-500" />
             <span className="text-sm">Compete in Tournaments</span>
           </div>
           <div className="flex items-center gap-2">
-            <Rocket className="h-6 w-6 text-blue-500" />
+            <Rocket className="h-6 w-6 text-orange-500" />
             <span className="text-sm">Milestone-Based Progress</span>
           </div>
         </div>
