@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import React from 'react'
 
 interface val { 
@@ -13,7 +14,7 @@ const RankingList:React.FC<val> = ({name,rank , image}) => {
                <div className="flex items-center gap-5">
                  <div className="w-5 h-5 rounded-full bg-black/20"></div>
                  <div className="w-12 h-12 rounded-full overflow-hidden">
-                   <img className="w-full h-full object-cover" src={image} alt="not showing" />
+                   <Image className="w-full h-full object-cover" src={image} alt="not showing" />
                  </div>
                  <h1 className="font-bold opacity-60">{name}</h1>
                </div>

@@ -2,21 +2,85 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import type { TournamentDialogProps } from './TournamentDialog'
+
+// Dynamic import of the Dialog component with ssr disabled
+const TournamentDialog = dynamic<TournamentDialogProps>(
+  () => import('./TournamentDialog'),
+  { ssr: false }
+)
 
 const tournaments = [
-  { id: 1, name: "Beginner's Bash", startDate: "2023-06-01", status: "ongoing", price:"20 Aura" },
-  { id: 2, name: "Intermediate Challenge", startDate: "2023-06-15", status: "ongoing", price:"30 Aura" },
-  { id: 3, name: "Advanced Arena", startDate: "2023-07-01", status: "upcoming", price:"50 Aura" },
-  { id: 4, name: "Language Masters", startDate: "2023-07-15", status: "upcoming", price:"50 Aura" },
-  { id: 5, name: "Quiz Champions", startDate: "2023-06-20", status: "ongoing", price:"50 Aura" },
-]
+  { id: 1, name: "Beginner's Bash", startDate: "2023-06-01", status: "ongoing", price: "20 Aura" },
+  { id: 2, name: "Intermediate Challenge", startDate: "2023-06-15", status: "ongoing", price: "30 Aura" },
+  { id: 3, name: "Advanced Arena", startDate: "2023-07-01", status: "upcoming", price: "50 Aura" },
+  { id: 4, name: "Language Masters", startDate: "2023-07-15", status: "upcoming", price: "50 Aura" },
+  { id: 5, name: "Quiz Champions", startDate: "2023-06-20", status: "ongoing", price: "50 Aura" },
+] as const
 
-export default function TournamentsPage() {
+interface Tournament {
+  id: number;
+  name: string;
+  startDate: string;
+  status: string;
+  price: string;
+}
+
+interface TournamentCardProps {
+  tournament: Tournament;
+}
+
+function TournamentCard({ tournament }: TournamentCardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const router = useRouter()
+
+  const handleJoin = () => {
+    if (tournament.status === "ongoing") {
+      setIsModalOpen(true)
+    } else {
+      alert(`You've registered for ${tournament.name}. We'll notify you when it starts!`)
+    }
+  }
+
+  const handleStartQuiz = (playerName: string) => {
+    router.push(`/quiz/${tournament.id}?name=${encodeURIComponent(playerName)}`)
+  }
+
+  return (
+    <Card className="bg-white border-orange-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <CardHeader className="bg-orange-50 rounded-t-lg">
+        <CardTitle className="text-2xl font-bold text-orange-600">{tournament.name}</CardTitle>
+      </CardHeader>
+      <CardContent className="pt-6">
+        <p className="text-orange-700">Starts: {tournament.startDate}</p>
+        <p className="text-orange-700 capitalize">Status: <span className="font-semibold">{tournament.status}</span></p>
+        <p className="text-orange-700">Price: {tournament.price}</p>
+      </CardContent>
+      <CardFooter>
+        <Button 
+          className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+          onClick={handleJoin}
+        >
+          {tournament.status === "ongoing" ? "Join Now" : "Register"}
+        </Button>
+      </CardFooter>
+
+      {isModalOpen && (
+        <TournamentDialog
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          tournament={tournament}
+          onStartQuiz={handleStartQuiz}
+        />
+      )}
+    </Card>
+  )
+}
+
+export default function Page() {
   const ongoingTournaments = tournaments.filter(t => t.status === "ongoing")
   const upcomingTournaments = tournaments.filter(t => t.status === "upcoming")
 
@@ -42,84 +106,5 @@ export default function TournamentsPage() {
         </div>
       </section>
     </div>
-  )
-}
-
-interface Tournament {
-  id: number;
-  name: string;
-  startDate: string;
-  status: string;
-  price: string;
-}
-
-function TournamentCard({ tournament }: { tournament: Tournament }) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [playerName, setPlayerName] = useState('')
-  const router = useRouter()
-
-  const handleJoin = () => {
-    if (tournament.status === "ongoing") {
-      setIsModalOpen(true)
-    } else {
-      alert(`You've registered for ${tournament.name}. We'll notify you when it starts!`)
-    }
-  }
-
-  const handleStartQuiz = () => {
-    if (!playerName.trim()) {
-      alert("Please enter your name")
-      return
-    }
-    router.push(`/quiz/${tournament.id}?name=${encodeURIComponent(playerName)}`)
-  }
-
-  return (
-    <Card className="bg-white border-orange-200 shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="bg-orange-50 rounded-t-lg">
-        <CardTitle className="text-2xl font-bold text-orange-600">{tournament.name}</CardTitle>
-      </CardHeader>
-      <CardContent className="pt-6">
-        <p className="text-orange-700">Starts: {tournament.startDate}</p>
-        <p className="text-orange-700 capitalize">Status: <span className="font-semibold">{tournament.status}</span></p>
-        <p className="text-orange-700">Starts: {tournament.price}</p>
-      </CardContent>
-      <CardFooter>
-        <Button 
-          className="w-full bg-orange-600 hover:bg-orange-700 text-white"
-          onClick={handleJoin}
-        >
-          {tournament.status === "ongoing" ? "Join Now" : "Register"}
-        </Button>
-      </CardFooter>
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[425px] bg-white">
-          <DialogHeader>
-            <DialogTitle className="text-orange-600">Join Tournament: {tournament.name}</DialogTitle>
-            <DialogDescription className="text-orange-700">
-              Enter your name to join the tournament and start the quiz.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right text-orange-600">
-                Name
-              </Label>
-              <Input
-                id="name"
-                value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}
-                className="col-span-3 border-orange-300 focus:border-orange-500 focus:ring-orange-500"
-                placeholder="Enter your name"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button onClick={handleStartQuiz} className="bg-orange-600 hover:bg-orange-700 text-white">Start Quiz</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </Card>
   )
 }

@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
-import { ArrowLeft, Volume2, Heart, Star, Zap, CheckCircle, XCircle } from 'lucide-react'
+import { ArrowLeft, Volume2, Heart, Zap, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'

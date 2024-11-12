@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface UserProgressProps {
     activeCourse: {
       id: string;
@@ -13,12 +15,12 @@ interface UserProgressProps {
     activeCourse,
     hearts,
     points,
-    hasActiveSubscription
+    // hasActiveSubscription
   }: UserProgressProps) => {
     return (
       <div className="border rounded-xl p-4 mb-4">
         <div className="flex items-center gap-4">
-          <img
+          <Image
             src={activeCourse.imageUrl}
             alt={activeCourse.title}
             className="h-20 w-20"

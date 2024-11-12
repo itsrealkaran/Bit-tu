@@ -1,3 +1,4 @@
+import Image from "next/image";
 import RankingList from "./Component/RankingList";
 
 export default function LeaderboardPage() {
@@ -9,7 +10,7 @@ export default function LeaderboardPage() {
         {/* this is the right side  */}
         <div className="w-[58%] flex flex-col items-center h-full ">
           <div className="hover:rotate-[10deg] transition-all duration-500" >
-            <img src="https://d35aaqx5ub95lt.cloudfront.net/images/leagues/660a07cd535396f03982f24bd0c3844a.svg" alt="not showing" />
+            <Image src="https://d35aaqx5ub95lt.cloudfront.net/images/leagues/660a07cd535396f03982f24bd0c3844a.svg" alt="not showing" />
           </div>
 
           <div >
@@ -31,7 +32,7 @@ export default function LeaderboardPage() {
           <h2 className="text-lg font-extrabold w-[55%] leading-[1.7rem] mt-[6px]">Do lessons. Earn Xp. Compete.</h2>
           <p className="opacity-50 font-bold leading-[1.7rem] tracking-tight mt-2 text-md w-[68%]">Earn XP through lessons, then compete with players in a weekly leaderboard</p>
         <div className="absolute right-1 top-5">
-          <img className=" scale-110" src="https://d35aaqx5ub95lt.cloudfront.net/images/leagues/071159d03311fcb556c4dfe730941de1.svg" alt="not showing" />
+          <Image className=" scale-110" src="https://d35aaqx5ub95lt.cloudfront.net/images/leagues/071159d03311fcb556c4dfe730941de1.svg" alt="not showing" />
         </div>
         </div>
         </div>

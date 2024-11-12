@@ -4,22 +4,35 @@ import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Users, Gift, Trophy, Sparkles } from 'lucide-react'
 
 export default function ReferralPage() {
   const [referralCode, setReferralCode] = useState('')
   const [copiedMessage, setCopiedMessage] = useState('')
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
+    setIsMounted(true)
     // In a real app, this would come from an API or user session
     setReferralCode('QUIZMASTER2023')
   }, [])
 
-  const copyReferralCode = () => {
-    navigator.clipboard.writeText(referralCode)
-    setCopiedMessage('Copied!')
-    setTimeout(() => setCopiedMessage(''), 2000)
+  const copyReferralCode = async () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(referralCode)
+        setCopiedMessage('Copied!')
+      } catch {  // Empty catch block without parameter
+        setCopiedMessage('Failed to copy')
+      } finally {
+        setTimeout(() => setCopiedMessage(''), 2000)
+      }
+    }
+  }
+
+  // Don't render anything until client-side hydration is complete
+  if (!isMounted) {
+    return null
   }
 
   return (

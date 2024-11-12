@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Wallet, BookOpen, Menu, X, Zap, Users, Lightbulb } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useSDK } from '@metamask/sdk-react';
-import * as Popover from "@radix-ui/react-popover";
-import { ethers } from 'ethers';
+import { useSDK } from '@metamask/sdk-react'
+import * as Popover from "@radix-ui/react-popover"
+import { ethers } from 'ethers'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -16,158 +16,156 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useContracts } from '@/hooks/useContracts';
+import { useContracts } from '@/hooks/useContracts'
+
+interface UserData {
+  name: string
+  referralId: string
+  score: string
+}
+
+interface RegistrationError {
+  message: string
+}
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { sdk, connected, connecting, account } = useSDK();
-  const { checkUserExists, loginUser, loading: contractsLoading, userAuthContract } = useContracts();
+  const { sdk, connected, connecting, account } = useSDK()
+  const { checkUserExists, loginUser, userAuthContract } = useContracts()
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [name, setName] = useState('');
-  const [referralId, setReferralId] = useState('');
-  const [registrationError, setRegistrationError] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [name, setName] = useState('')
+  const [referralId, setReferralId] = useState('')
+  const [registrationError, setRegistrationError] = useState('')
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [userData, setUserData] = useState<UserData | null>(null)
 
-  // Add new state for user data
-  const [userData, setUserData] = useState<{
-    name: string;
-    referralId: string;
-    score: string;
-  } | null>(null);
-
-  // Effect to handle wallet connection status changes
-  useEffect(() => {
-    const checkUserStatus = async () => {
-      if (connected && account) {
-        console.log('Checking user status for account:', account);
-        try {
-          const exists = await checkUserExists();
-          console.log('User exists check result:', exists);
-          
-          if (exists) {
-            console.log('Attempting to login existing user...');
-            const userInfo = await loginUser();
-            if (userInfo) {
-              console.log('Login successful:', userInfo);
-              setUserData(userInfo);
-              setIsModalOpen(false);
-            } else {
-              console.log('Login failed for existing user');
-              setIsModalOpen(true);
-            }
+  const checkUserStatus = useCallback(async () => {
+    if (connected && account) {
+      console.log('Checking user status for account:', account)
+      try {
+        const exists = await checkUserExists()
+        console.log('User exists check result:', exists)
+        
+        if (exists) {
+          console.log('Attempting to login existing user...')
+          const userInfo = await loginUser()
+          if (userInfo) {
+            console.log('Login successful:', userInfo)
+            setUserData(userInfo)
+            setIsModalOpen(false)
           } else {
-            console.log('New user detected, showing registration modal');
-            setIsModalOpen(true);
+            console.log('Login failed for existing user')
+            setIsModalOpen(true)
           }
-        } catch (err) {
-          console.error('Error in checkUserStatus:', err);
-          setRegistrationError('Failed to check user status. Please try again.');
+        } else {
+          console.log('New user detected, showing registration modal')
+          setIsModalOpen(true)
         }
-      } else {
-        setUserData(null);
+      } catch (err) {
+        console.error('Error in checkUserStatus:', err)
+        setRegistrationError('Failed to check user status. Please try again.')
       }
-    };
+    } else {
+      setUserData(null)
+    }
+  }, [connected, account, checkUserExists, loginUser])
 
-    checkUserStatus();
-  }, [connected, account]);
+  useEffect(() => {
+    checkUserStatus()
+  }, [checkUserStatus])
 
   const handleSubmitRegistration = async () => {
-    console.log('Starting registration process...');
-    setIsProcessing(true);
-    setRegistrationError('');
+    console.log('Starting registration process...')
+    setIsProcessing(true)
+    setRegistrationError('')
     
     if (!userAuthContract || !account) {
-      console.error('Missing required data:', { userAuthContract: !!userAuthContract, account });
-      setRegistrationError('Contract or account not available. Please try reconnecting your wallet.');
-      setIsProcessing(false);
-      return;
+      console.error('Missing required data:', { userAuthContract: !!userAuthContract, account })
+      setRegistrationError('Contract or account not available. Please try reconnecting your wallet.')
+      setIsProcessing(false)
+      return
     }
     
     try {
-      console.log('Creating user with name:', name, 'and referralId:', referralId);
+      console.log('Creating user with name:', name, 'and referralId:', referralId)
       
-      // Wait for the transaction to be mined
       const tx = await userAuthContract.createUser(
         name,
         referralId || '',
         {
           gasLimit: ethers.BigNumber.from(200000)
         }
-      );
+      )
       
-      console.log('Transaction sent, waiting for confirmation:', tx.hash);
-      const receipt = await tx.wait();
-      console.log('Transaction confirmed:', receipt);
+      console.log('Transaction sent, waiting for confirmation:', tx.hash)
+      const receipt = await tx.wait()
+      console.log('Transaction confirmed:', receipt)
 
       if (receipt.status === 1) {
-        console.log('User created successfully, waiting before login attempt...');
+        console.log('User created successfully, waiting before login attempt...')
         
-        // Add a small delay to ensure blockchain state is updated
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 2000))
         
-        // Verify user exists before attempting login
-        const exists = await checkUserExists();
+        const exists = await checkUserExists()
         if (!exists) {
-          throw new Error('User creation verification failed');
+          throw new Error('User creation verification failed')
         }
 
-        // Now try to login
-        const userInfo = await loginUser();
+        const userInfo = await loginUser()
         if (userInfo) {
-          console.log('Login successful after registration:', userInfo);
-          setUserData(userInfo);
-          setIsModalOpen(false);
+          console.log('Login successful after registration:', userInfo)
+          setUserData(userInfo)
+          setIsModalOpen(false)
         } else {
-          throw new Error('Login failed after successful registration');
+          throw new Error('Login failed after successful registration')
         }
       } else {
-        throw new Error('Transaction failed');
+        throw new Error('Transaction failed')
       }
-    } catch (error: any) {
-      console.error('Registration failed with detailed error:', error);
-      let errorMessage = 'Registration failed. Please try again later.';
+    } catch (error) {
+      console.error('Registration failed with detailed error:', error)
+      let errorMessage = 'Registration failed. Please try again later.'
       
-      if (error.message.includes('user already exists')) {
-        errorMessage = 'This wallet is already registered. Please try logging in instead.';
-      } else if (error.message.includes('invalid referral')) {
-        errorMessage = 'Invalid referral code. Please check and try again.';
-      } else if (error.message.includes('insufficient funds')) {
-        errorMessage = 'Insufficient funds to complete the transaction. Please check your wallet balance.';
-      } else if (error.message.includes('User does not exist')) {
-        errorMessage = 'Registration appeared successful but verification failed. Please try logging in or registering again.';
+      const err = error as RegistrationError
+      if (err.message.includes('user already exists')) {
+        errorMessage = 'This wallet is already registered. Please try logging in instead.'
+      } else if (err.message.includes('invalid referral')) {
+        errorMessage = 'Invalid referral code. Please check and try again.'
+      } else if (err.message.includes('insufficient funds')) {
+        errorMessage = 'Insufficient funds to complete the transaction. Please check your wallet balance.'
+      } else if (err.message.includes('User does not exist')) {
+        errorMessage = 'Registration appeared successful but verification failed. Please try logging in or registering again.'
       }
       
-      setRegistrationError(errorMessage);
+      setRegistrationError(errorMessage)
     } finally {
-      setIsProcessing(false);
+      setIsProcessing(false)
     }
-  };
+  }
 
   const handleConnect = async () => {
     try {
-      console.log('Initiating wallet connection...');
-      await sdk?.connect();
-      // User status will be checked by the useEffect hook
+      console.log('Initiating wallet connection...')
+      await sdk?.connect()
     } catch (err) {
-      console.warn('Connection failed:', err);
+      console.warn('Connection failed:', err)
     }
-  };
+  }
 
-  const disconnect = () => {
-    console.log('Disconnecting wallet...');
+  const disconnect = useCallback(() => {
+    console.log('Disconnecting wallet...')
     if (sdk) {
-      sdk.terminate();
-      setUserData(null); // Clear user data on disconnect
-      console.log('Wallet disconnected');
+      sdk.terminate()
+      setUserData(null)
+      console.log('Wallet disconnected')
     }
-  };
+  }, [sdk])
 
   const formatAddress = (address: string | undefined) => {
-    if (!address) return 'No Address';
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
-
+    if (!address) return 'No Address'
+    return `${address.slice(0, 6)}...${address.slice(-4)}`
+  }
   // Update the Popover content to show user info
   const renderWalletContent = () => (
     <Popover.Content className="mt-2 p-2 w-56 bg-white border border-orange-100 rounded-lg shadow-lg animate-in fade-in-50 zoom-in-95">

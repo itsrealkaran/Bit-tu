@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, Globe, Search, Loader } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -29,11 +29,39 @@ const languages: Language[] = [
   { name: 'Arabic', flag: '🇸🇦', popular: false, price: 50 },
 ]
 
+// Create a client-side only wrapper component for animations
+const AnimatedCard = ({ children, index }: { children: React.ReactNode; index: number }) => {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
+    return <div>{children}</div>
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.1 }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
 export default function LanguageSelectionPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(false)
   const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(null)
+  const [isMounted, setIsMounted] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const filteredLanguages = languages.filter(lang =>
     lang.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -42,10 +70,8 @@ export default function LanguageSelectionPage() {
   const handleLanguageSelect = (lang: Language) => {
     setSelectedLanguage(lang)
     setLoading(true)
-    // Simulate API call or loading process
     setTimeout(() => {
-      // router.push(`/learn/${lang.name.toLowerCase()}`)
-      router.push(`/learn`)
+      router.push('/learn')
     }, 2000)
   }
 
@@ -70,12 +96,7 @@ export default function LanguageSelectionPage() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredLanguages.map((lang, index) => (
-            <motion.div
-              key={lang.name}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-            >
+            <AnimatedCard key={lang.name} index={index}>
               <Card className="overflow-hidden">
                 <CardContent className="p-0">
                   <button 
@@ -93,7 +114,7 @@ export default function LanguageSelectionPage() {
                   </button>
                 </CardContent>
               </Card>
-            </motion.div>
+            </AnimatedCard>
           ))}
         </div>
 
@@ -105,29 +126,31 @@ export default function LanguageSelectionPage() {
         )}
 
         <div className="mt-12 text-center">
-          <p className="mb-4 text-sm text-gray-500">Don't see your language? We're always adding more!</p>
+          <p className="mb-4 text-sm text-gray-500">Don&apos;t see your language? We&apos;re always adding more!</p>
           <Button className="text-orange-600 border-orange-300 hover:bg-orange-50">
             Request a Language
           </Button>
         </div>
       </div>
 
-      <AnimatePresence>
-        {loading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          >
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-              <Loader className="h-12 w-12 animate-spin text-orange-600 mx-auto mb-4" />
-              <p className="text-lg font-semibold text-gray-700">Loading {selectedLanguage?.name}...</p>
-              <p className="text-sm text-gray-500 mt-2">Preparing your learning journey</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isMounted && (
+        <AnimatePresence>
+          {loading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            >
+              <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                <Loader className="h-12 w-12 animate-spin text-orange-600 mx-auto mb-4" />
+                <p className="text-lg font-semibold text-gray-700">Loading {selectedLanguage?.name}...</p>
+                <p className="text-sm text-gray-500 mt-2">Preparing your learning journey</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
     </div>
   )
 }
