@@ -24,13 +24,13 @@ export default function ReferralPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 bg-white">
-      <h1 className="text-4xl font-bold text-blue-600 mb-8 text-center">Invite Friends, Earn Rewards!</h1>
+      <h1 className="text-4xl font-bold text-orange-500 mb-8 text-center">Invite Friends, Earn Rewards!</h1>
       
       <div className="max-w-3xl mx-auto">
-        <Card className="mb-8 border-blue-200 shadow-lg">
-          <CardHeader className="bg-blue-50">
-            <CardTitle className="text-2xl font-bold text-blue-600 flex items-center gap-2">
-              <Users className="text-blue-500" />
+        <Card className="mb-8 border-gray-200 shadow-lg">
+          <CardHeader className="bg-gray-50">
+            <CardTitle className="text-2xl font-bold text-orange-500 flex items-center gap-2">
+              <Users className="text-orange-400" />
               Your Referral Code
             </CardTitle>
           </CardHeader>
@@ -39,11 +39,11 @@ export default function ReferralPage() {
               <Input 
                 value={referralCode} 
                 readOnly 
-                className="text-lg font-semibold text-blue-600 border-blue-300"
+                className="text-lg font-semibold text-orange-600 border-orange-300"
               />
               <Button 
                 onClick={copyReferralCode}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-orange-500 hover:bg-orange-600 text-white"
               >
                 Copy
               </Button>
@@ -55,49 +55,49 @@ export default function ReferralPage() {
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="border-blue-200 shadow-md">
+          <Card className="border-gray-200 shadow-md">
             <CardHeader>
-              <CardTitle className="text-xl font-semibold text-blue-600 flex items-center gap-2">
-                <Gift className="text-blue-500" />
+              <CardTitle className="text-xl font-semibold text-orange-500 flex items-center gap-2">
+                <Gift className="text-orange-400" />
                 Invite Friends
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-blue-700">Share your code and invite friends to join the quiz platform.</p>
+              <p className="text-gray-700">Share your code and invite friends to join the quiz platform.</p>
             </CardContent>
           </Card>
 
-          <Card className="border-blue-200 shadow-md">
+          <Card className="border-gray-200 shadow-md">
             <CardHeader>
-              <CardTitle className="text-xl font-semibold text-blue-600 flex items-center gap-2">
-                <Trophy className="text-blue-500" />
+              <CardTitle className="text-xl font-semibold text-orange-500 flex items-center gap-2">
+                <Trophy className="text-orange-400" />
                 Earn Points
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-blue-700">Get 500 points for each friend who joins using your code.</p>
+              <p className="text-gray-700">Get 500 points for each friend who joins using your code.</p>
             </CardContent>
           </Card>
 
-          <Card className="border-blue-200 shadow-md">
+          <Card className="border-gray-200 shadow-md">
             <CardHeader>
-              <CardTitle className="text-xl font-semibold text-blue-600 flex items-center gap-2">
-                <Sparkles className="text-blue-500" />
+              <CardTitle className="text-xl font-semibold text-orange-500 flex items-center gap-2">
+                <Sparkles className="text-orange-400" />
                 Unlock Rewards
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-blue-700">Use your points to unlock exclusive quizzes and badges.</p>
+              <p className="text-gray-700">Use your points to unlock exclusive quizzes and badges.</p>
             </CardContent>
           </Card>
         </div>
 
-        <Card className="border-blue-200 shadow-lg">
-          <CardHeader className="bg-blue-50">
-            <CardTitle className="text-2xl font-bold text-blue-600">How It Works</CardTitle>
+        <Card className="border-gray-200 shadow-lg">
+          <CardHeader className="bg-gray-50">
+            <CardTitle className="text-2xl font-bold text-orange-500">How It Works</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
-            <ol className="list-decimal list-inside space-y-2 text-blue-700">
+            <ol className="list-decimal list-inside space-y-2 text-gray-700">
               <li>Share your unique referral code with friends</li>
               <li>Friends sign up using your code</li>
               <li>You earn 500 points for each successful referral</li>

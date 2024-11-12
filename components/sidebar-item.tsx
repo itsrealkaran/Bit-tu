@@ -19,7 +19,7 @@ export const SidebarItem = ({ label, iconSrc, href }: SidebarItemProps) => {
     <Button
       className={`h-[52px] justify-start w-full font-bold transition-colors
         ${isActive 
-          ? "bg-blue-100 text-blue-600 hover:bg-blue-200" 
+          ? "bg-orange-100 text-orange-600 hover:bg-orange-200" 
           : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-600"
         }`}
       asChild
